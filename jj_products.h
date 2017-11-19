@@ -244,7 +244,7 @@ int addProduct(long barcode, char name[255], float price, int quantity, int cate
                 in_file_products[j].price = price;
                 in_file_products[j].quantity += quantity;
                 in_file_products[j].category = category;
-                in_file_products[j].enabled == 1;
+                in_file_products[j].enabled = 1;
             } 
             else
             { //If the barcode given already exists
