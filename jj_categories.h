@@ -3,28 +3,6 @@ TITLE: JJ Store Management System Categories
 VERSION: 0.1 (alpha)
 This library contains the main functions to manage products categories.
 */
-#define MAX_CATEGORIES 100 //This is the maximum amount of categories the program can work with at once.
-/*
-CATEGORY DATA TYPE -
-*/
-struct category
-{
-    int ID; //Unique identifier for the category.
-    char name[255]; //The category name.
-    char description[255]; //The category description.
-    int enabled; //If the category is currently active.
-};
-
-/*
-END VALUE - 
-Null equivalent for our category struct
-*/
-struct category END_CATEGORY = {.ID = -1};
-
-/*
-IN-FILE CATEGORIES ARRAY -
-*/
-struct category in_file_categories [MAX_CATEGORIES];
 
 /*
 LOAD CATEGORIES -
@@ -117,32 +95,18 @@ void printCategories(void)
     {
         if(in_file_categories[i].ID != END_CATEGORY.ID  && in_file_categories[i].enabled) //If the first character of the name is not null and the category is enabled.
         {
-            int tabs_to_add = (MAX_COLUMN_WIDTH - (int)log10(in_file_categories[i].ID) + 1) / TAB_SIZE; //This will determine the amount of tabs we will print depending on its length
-            if(tabs_to_add < 1 && in_file_categories[i].ID > 0) //If the tabs we need to add is less than one and the ID is greater than 0
-            { 
-                printf(" %i",in_file_categories[i].ID / (int)pow(10.0, (abs(tabs_to_add) + 3.0)));
-                printf("... ");
-            }
-            else
-            {
-                if(in_file_categories[i].ID == 0)
-                {
-                    tabs_to_add = MAX_COLUMN_WIDTH / TAB_SIZE;
-                }
-                printf(" %i", in_file_categories[i].ID);
-                for(int j = 0; j < tabs_to_add; j++)
-                {
-                    printf("\t");   
-                }
-            }
-            printf(" ||");
-            
-           
+            int tabs_to_add = 0;//This will determine the amount of tabs we will print depending on its length
+          
+			//We print the category ID	
+			printInt(in_file_categories[i].ID, " ||"); 
+			//We print the category name
 			printString(in_file_categories[i].name, " ||");
+			//We print the category description	
 			printString(in_file_categories[i].description, "\n");
         }
     }
 }
+
 
 /*
 FIND CATEGORY -

@@ -17,7 +17,9 @@ int main() {
     printCategories();
     orderProduct(7501055354306, 8.00, 100);
     orderProduct(7501055307906, 5.00, 1);
-    //printCategories();
+    printf("\n\n\n");
+	printSales();
+	//printCategories();
     return 0;
 
 }

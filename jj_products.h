@@ -3,33 +3,8 @@ TITLE: JJ Store Management System Categories
 VERSION: 0.1 (alpha)
 This library contains the main functions to manage products categories.
 */
-#define MAX_PRODUCTS 1000 //Maximum amount of products the program can work with
-#define BARCODE_LENGTH 13//The maximum length for barcodes
+
 #include "jj_sales.h"
-
-/*
-PRODUCT DATA TYPE -
-*/
-struct product
-{
-    char name[255]; //The name of the product.
-    int enabled; //If it is available.
-    long barcode; //Unique identifier of the product.
-    int category; //To which category the product belongs.
-    int quantity; //How much the product costs.
-    float price; //The price of the product.
-};
-
-/*
-PRODUCT END -
-A null product
-*/
-struct product END_PRODUCT = {.barcode = -1};
-
-/*
-IN-FILE PRODUCTS ARRAY
-*/
-struct product in_file_products [MAX_PRODUCTS];
 
 /*
 LOAD PRODUCTS -
@@ -96,55 +71,33 @@ void printProducts(void)
             }
             printf(" ||"); //We print the column separator
             
-		            
+		    //We print the product name
 			printString(in_file_products[i].name, " ||");
 
             //We print the price
             // We get the length of the integer part of the price and add three (the decimal point and two decimals), and give it a tab equivalent
-            tabs_to_add = (MAX_COLUMN_WIDTH - (int)log10(round(in_file_products[i].price)) - 6) / TAB_SIZE;
-            if(tabs_to_add < 1) //If there aren't any tabs to add...
-            {
-                printf(" %.2f", in_file_products[i].price / pow(10.0, (abs(tabs_to_add) + 3.0)));
-                printf("...");
-            }
-            else //...otherwise we simply print the number
-            {
-                printf(" %.2f", in_file_products[i].price);
-                for(int j = 0; j < tabs_to_add; j++)
-                {
-                    printf("\t");
-                }
-            }
-            printf(" ||");
-            
-            //We print the quantity available
-            if((MAX_COLUMN_WIDTH - (int)ceil(log10(in_file_products[i].quantity))) % TAB_SIZE == 0)
-            {
-                tabs_to_add = (MAX_COLUMN_WIDTH - (int)ceil(log10(in_file_products[i].quantity)) - TAB_SIZE )/ TAB_SIZE;
-            }
-            else
-            {
-                tabs_to_add = (MAX_COLUMN_WIDTH - (int)ceil(log10(in_file_products[i].quantity))) / TAB_SIZE;
-            }
-            if(tabs_to_add < 1 && in_file_products[i].quantity > 0)
-            {
-                printf(" %i", in_file_products[i].quantity / (int)pow(10.0, (abs(tabs_to_add) + 3.0)));
-                printf("...");
-            }
-            else
-            {
-                if(in_file_products[i].quantity == 0)
-                {
-                    tabs_to_add = MAX_COLUMN_WIDTH / TAB_SIZE;
-                }
-                printf(" %i", in_file_products[i].quantity);
-                for(int j = 0; j < tabs_to_add; j++)
-                {
-                    printf("\t");
-                }
-            }
-            printf(" ||");
-            
+			////tabs_to_add = (MAX_COLUMN_WIDTH - (int)log10(round(in_file_products[i].price)) - 6) / TAB_SIZE;
+			////if(tabs_to_add < 1) //If there aren't any tabs to add...
+			////{
+			////	printf(" %.2f", in_file_products[i].price / pow(10.0, (abs(tabs_to_add) + 3.0)));
+			////	printf("...");
+			////}
+			////else //...otherwise we simply print the number
+			////{
+			////	printf(" %.2f", in_file_products[i].price);
+			////	for(int j = 0; j < tabs_to_add; j++)
+			////	{
+			////		printf("\t");
+			////	}
+			////}
+			////printf(" ||");
+          
+			//We print the price
+		   	printFloat(in_file_products[i].price, " ||");	
+			
+			//We print the quantity
+		   	printInt(in_file_products[i].quantity, " ||");	
+                        
             //We print the category
             char category_name[255];
             struct category product_category = findCategory(in_file_products[i].category);
@@ -263,20 +216,3 @@ void deleteProduct(int product_barcode)
     }
 }
 
-/*
-FIND PRODUCT -
-This function looks through in_file_products and returns a given product
-@param Receives the product barcode
-@return Returns the product structure to the corresponding barcode
-*/
-struct product findProduct(long product_barcode)
-{
-    for(int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
-    {
-        if(in_file_products[i].barcode == product_barcode)
-        {
-            return in_file_products[i];
-        }
-    }
-    return END_PRODUCT;
-}

@@ -3,33 +3,24 @@ TITLE: JJ Store Management System Sales
 VERSION: 0.1 (alpha)
 This library contains the main functions to manage products categories.
 */
-#include <time.h>
-#define MAX_SALES 1000
+
 /*
-SALE DATA TYPE -
+FIND PRODUCT -
+This function looks through in_file_products and returns a given product
+@param Receives the product barcode
+@return Returns the product structure to the corresponding barcode
 */
-struct sale
+struct product findProduct(long product_barcode)
 {
-    struct tm timestamp; //Time of sale.
-    float amount; //Amount of money transacted
-    long product; //Barcode of the product sold/ordered.
-    int quantity; //Amount of product sold/ordered.
-    int is_order; //Boolean to detemine if sale or order.
-};
-
-/*
-SALE END (NULL VALUE) -
-A null value for our structure.
-*/
-struct sale END_SALE = {.is_order = -1};
-
-
-/*
-LEDGER (IN FILE SALES) -
-An array containing all sales as structures.
-*/
-struct sale ledger[MAX_SALES];
-
+    for(int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
+    {
+        if(in_file_products[i].barcode == product_barcode)
+        {
+            return in_file_products[i];
+        }
+    }
+    return END_PRODUCT;
+}
 
 /*
 LOAD SALES TO LEDGER -
@@ -135,13 +126,44 @@ void printSales(void)
 {
     printHeading("assets/sales.csv");
    	
-	//Print the time
 	char timestamp[255]; //Here we will store the result of asctime()
 	for(int i = 0; ledger[i].is_order != END_SALE.is_order; i++)
 	{
+		//Print the time
 		strcpy(timestamp, asctime(&ledger[i].timestamp));
+		//We eliminate the last character which is a line break
+		timestamp[strlen(timestamp) - 1] = '\0';
 		printString(timestamp, " ||");
+
+		//Print the amount
+		if(ledger[i].is_order)
+		{
+			printFloat(ledger[i].amount * -1, " ||");
+		}
+		else
+		{
+			printFloat(ledger[i].amount, " ||");
+		}
+
+		//Print the product name
+		struct product found_product = findProduct(ledger[i].product);
+		printString(found_product.name, " ||");
+
+		//Print the quantity
+		printInt(ledger[i].quantity, " ||");
+
+		//Print if it is order
+		if(ledger[i].is_order)
+		{
+			printString("Si", "\n");
+		}
+		else
+		{
+			printString("No", "\n");
+		}
+
 	}
+
     
 }
 
