@@ -96,29 +96,9 @@ void printProducts(void)
             }
             printf(" ||"); //We print the column separator
             
-            //We print the name
-            tabs_to_add = (MAX_COLUMN_WIDTH - strlen(in_file_products[i].name)) / TAB_SIZE; //We convert the character length to tabs
-            if(tabs_to_add < 1) //If there are no tabs to add, meaning the name length exceeds the column width...
-            {
-                printf(" "); //...we print the initial space and...
-                //...we print all letters up to certain length
-                for(int j = 0; j < MAX_COLUMN_WIDTH - TAB_SIZE - 3; j++)
-                {
-                    printf("%c",in_file_products[i].name[j]);
-                }
-                printf("..."); //We print the final three points
-            }
-            else //...otherwise we print the name and add the tabs
-            {
-                printf(" %s", in_file_products[i].name);
-                for(int j = 0; j < tabs_to_add; j++)
-                {
-                    printf("\t");
-                }
-            }
-            printf(" ||"); //We print the column separator
-            
-            
+		            
+			printString(in_file_products[i].name, " ||");
+
             //We print the price
             // We get the length of the integer part of the price and add three (the decimal point and two decimals), and give it a tab equivalent
             tabs_to_add = (MAX_COLUMN_WIDTH - (int)log10(round(in_file_products[i].price)) - 6) / TAB_SIZE;
@@ -176,25 +156,7 @@ void printProducts(void)
             {
                 strcpy(category_name, "N/a");
             }
-            tabs_to_add = (MAX_COLUMN_WIDTH - strlen(category_name)) / TAB_SIZE;
-            if(tabs_to_add < 1)
-            {
-                printf(" ");
-                for(int j = 0; j < MAX_COLUMN_WIDTH - TAB_SIZE - 3; j++)
-                {
-                    printf("%c", category_name[j]);
-                }
-                printf("...");
-            }
-            else
-            {
-                printf(" %s", category_name);
-                for(int j = 0; j < tabs_to_add; j++)
-                {
-                    printf("\t");
-                }
-            }
-            printf("\n");
+            printString(category_name, "\n");
         }
     }
 }
