@@ -124,6 +124,7 @@ float moneyInPeriod(struct tm start_date, struct tm end_date, int earnings)
         }
         
     }
+	return total_money;
 }
 
 /*
