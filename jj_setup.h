@@ -213,7 +213,6 @@ This is procedure takes a float value and displays it in the correct table forma
 void printFloat(float float_to_print, char separator[])
 {
 	
-	float_to_print = fabsf(float_to_print); //We take the absolute value to avoid conflict when representing costs
 	int tabs_to_add = 0;
 	if((MAX_COLUMN_WIDTH - (int)log10(round(float_to_print)) - 6) / TAB_SIZE == 0)
 	{

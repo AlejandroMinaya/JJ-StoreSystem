@@ -138,7 +138,8 @@ void printSales(void)
 		//Print the amount
 		if(ledger[i].is_order)
 		{
-			printFloat(ledger[i].amount * -1, " ||");
+			printf("%s",' -');
+			printFloat(ledger[i].amount, " ||");
 		}
 		else
 		{
