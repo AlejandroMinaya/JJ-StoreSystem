@@ -137,45 +137,9 @@ void printCategories(void)
             }
             printf(" ||");
             
-            tabs_to_add = (MAX_COLUMN_WIDTH - strlen(in_file_categories[i].name)) / TAB_SIZE; //This will determine the amount of tabs we will print depending on its length
-            if(tabs_to_add < 1)
-            {
-                printf(" "); //We print the initial space
-                for(int j = 0; j < MAX_COLUMN_WIDTH - TAB_SIZE - 3; j++)
-                {
-                    printf("%c", in_file_categories[i].name[j]);
-                }
-                printf("...");
-            }
-            else
-            {
-              printf(" %s", in_file_categories[i].name);
-              for(int j = 0; j < tabs_to_add; j++)
-              {
-                  printf("\t");
-              }
-            }
-            printf(" ||"); 
-            
-            tabs_to_add = (MAX_COLUMN_WIDTH - strlen(in_file_categories[i].description)) / TAB_SIZE;
-            if(tabs_to_add < 1)
-            {
-                printf(" ");
-                for(int j = 0; j < MAX_COLUMN_WIDTH - TAB_SIZE - 3; j++)
-                {
-                    printf("%c", in_file_categories[i].description[j]);
-                }
-                printf("...");
-            }
-            else
-            {
-                printf(" %s", in_file_categories[i].description);
-                for(int j = 0; j < tabs_to_add; j++)
-                {
-                    printf("\t");
-                }
-            }
-            printf(" \n");
+           
+			printString(in_file_categories[i].name, " ||");
+			printString(in_file_categories[i].description, "\n");
         }
     }
 }

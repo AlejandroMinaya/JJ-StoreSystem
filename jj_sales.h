@@ -134,7 +134,14 @@ Procedure to print all sale information
 void printSales(void)
 {
     printHeading("assets/sales.csv");
-    
+   	
+	//Print the time
+	char timestamp[255]; //Here we will store the result of asctime()
+	for(int i = 0; ledger[i].is_order != END_SALE.is_order; i++)
+	{
+		strcpy(timestamp, asctime(&ledger[i].timestamp));
+		printString(timestamp, " ||");
+	}
     
 }
 

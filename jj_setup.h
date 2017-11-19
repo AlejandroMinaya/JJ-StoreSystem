@@ -119,3 +119,34 @@ void printHeading(char file_path[])
     printf("\n");
     fclose(open_file); //We close the file after reading the heading
 }
+
+/*
+PRINT STRING WITH FORMAT -
+Procedure that receives a string and prints it with the correct format
+@param the string to be print
+ */
+void printString(char string_to_print[], char separator[])
+{
+	//We print the name
+    int tabs_to_add = (MAX_COLUMN_WIDTH - strlen(string_to_print)) / TAB_SIZE; //We convert the character length to tabs
+    if(tabs_to_add < 1) //If there are no tabs to add, meaning the name length exceeds the column width...
+    {
+        printf(" "); //...we print the initial space and...
+        //...we print all letters up to certain length
+        for(int j = 0; j < MAX_COLUMN_WIDTH - TAB_SIZE - 3; j++)
+        {
+            printf("%c", string_to_print[j]);
+        }
+        printf("..."); //We print the final three points
+    }
+    else //...otherwise we print the name and add the tabs
+    {
+        printf(" %s", string_to_print);
+        for(int j = 0; j < tabs_to_add; j++)
+        {
+            printf("\t");
+        }
+    }
+    printf("%s",separator); //We print the column separator
+
+}
