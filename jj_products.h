@@ -242,5 +242,6 @@ void editProduct(long product_barcode, char name[255], float price, int quantity
             product_to_edit.category = category;
         }
     }
+    saveProducts();
 }
 
