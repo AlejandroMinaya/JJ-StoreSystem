@@ -152,4 +152,5 @@ void editCategory(int category_id, char category_name[], char category_descripti
 	{
 		strcpy(category_to_edit.description, category_description);
 	}
+	saveCategories();
 }
