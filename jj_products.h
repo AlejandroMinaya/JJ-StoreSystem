@@ -216,3 +216,31 @@ void deleteProduct(int product_barcode)
     }
 }
 
+/*
+EDIT PRODUCT
+This function allows the user to modify the information of an already existing product.
+*/ 
+void editProduct(long product_barcode, char name[255], float price, int quantity, int category)
+{
+    findProduct(long product_barcode);
+    if (in_file_products[i].barcode == product_barcode)
+    {
+        if(name[0] != '\0')
+        {
+            strcpy(in_file_products[i].name, name);
+        }
+        if(price >= 0)
+        {
+            in_file_products[i].price = price;
+        }
+        if(quantity >= 0)
+        {
+            in_file_products[i].quantity = quantity;
+        }
+        if(category >= 0)
+        {
+            in_file_products[i].category = category;
+        }
+    }
+}
+
