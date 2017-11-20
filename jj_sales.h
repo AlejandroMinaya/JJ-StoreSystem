@@ -91,6 +91,7 @@ EARNED/SPENT IN PERIOD -
 This function returns the total amount of money earned/spent in a period of time
 @param Receives a tm structure containing the start_date
 @param Receives a tm structure containing the end_date
+@param Receives boolean to return either earnings or costs
 @return Total amount of money 
 */
 float moneyInPeriod(struct tm start_date, struct tm end_date, int earnings)
