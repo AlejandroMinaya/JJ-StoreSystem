@@ -222,26 +222,30 @@ This function allows the user to modify the information of an already existing p
 */ 
 void editProduct(long product_barcode, char name[255], float price, int quantity, int category)
 {
-    struct product product_to_edit = findProduct(product_barcode);
-    if (product_to_edit.barcode == product_barcode)
+    for(int i= 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
     {
-        if(name[0] != '\0')
-        {
-            strcpy(product_to_edit.name, name);
-        }
-        if(price >= 0)
-        {
-            product_to_edit.price = price;
-        }
-        if(quantity >= 0)
-        {
-            product_to_edit.quantity = quantity;
-        }
-        if(category >= 0)
-        {
-            product_to_edit.category = category;
-        }
+       if(in_file_products[i].barcode == product_barcode)
+       {
+           if(name[0] != '\0')
+            {
+                strcpy(in_file_products[i].name, name);
+            }
+            if(price >= 0)
+            {
+                in_file_products[i].price = price;
+            }
+            if(quantity >= 0)
+            {
+               in_file_products[i].quantity = quantity;
+            }
+            if(category >= 0)
+            {
+                in_file_products[i].category = category;
+            }
+        } 
+        printf ("Codigo inexistente\n"); 
     }
     saveProducts();
 }
+   
 
