@@ -124,3 +124,32 @@ struct category findCategory(int category_id)
     }
     return END_CATEGORY;
 }
+
+
+/*
+EDIT CATEGORY -
+This procedure edits an already existing category
+@param the category id to identify the object
+@param the category name
+@param the category description
+*/
+void editCategory(int category_id, char category_name[], char category_description[])
+{
+	struct category category_to_edit = findCategory(category_id);
+	
+	if(category_to_edit.ID != END_CATEGORY.ID)
+	{
+		printf("\nERROR: Aun no se ha creado esta categoria.\n");
+		return;
+	}
+
+	if(category_name[0] != '\0')
+	{
+		strcpy(category_to_edit.name, category_name);
+	}
+
+	if(category_description[0] != '\0')
+	{
+		strcpy(category_to_edit.description, category_description);
+	}
+}
