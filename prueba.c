@@ -19,6 +19,14 @@ int main() {
     orderProduct(7501055307906, 5.00, 1);
     printf("\n\n\n");
 	printSales();
+	editCategory(8,"Refrescos","\0");
+	editProduct(7501055354306, "Xaviercito", 100.0, -1, -1);
+	printCategories();
+	printf("\n\n");
+	printProducts();
+	printf("\n\n");
+	printSales();
+	printf("\n\n");
 	//printCategories();
     return 0;
 
