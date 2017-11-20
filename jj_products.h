@@ -184,15 +184,15 @@ int orderProduct(long barcode, float price, int quantity)
 {
     for (int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
     {
-        if(in_file_products[i].barcode == barcode)
+        addSale(quantity * price, barcode, quantity, 1);
+		if(in_file_products[i].barcode == barcode)
         {
             in_file_products[i].quantity += quantity;
             if (in_file_products[i].enabled == 0)
             {
                 in_file_products[i].enabled = 1;
             }
-            saveProducts();
-            addSale(quantity * price, barcode, quantity, 1);//ESPACIO PARA SALES
+            saveProducts();   
             return 0;
         }
     }
