@@ -26,9 +26,9 @@ int findMainFiles(void)
 {
     //Declaring files array
     FILE * files[3]; //There are three main files: products.csv, category.csv, and sales.csv
-    files[0] = fopen("assets/products.csv", "r");
-    files[1] = fopen("assets/categories.csv", "r");
-    files[2] = fopen("assets/sales.csv", "r");
+    files[0] = fopen("products.csv", "r");
+    files[1] = fopen("categories.csv", "r");
+    files[2] = fopen("sales.csv", "r");
     
     //We cycle through the file streams to determine if any of them are NULL.
     for(int i = 0; i < 3; i++)

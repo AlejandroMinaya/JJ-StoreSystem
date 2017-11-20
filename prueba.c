@@ -27,6 +27,8 @@ int main() {
 	printf("\n\n");
 	printSales();
 	printf("\n\n");
+	
+	fopen("./pedrito/carta-renuncia.txt", "w");
 	//printCategories();
     return 0;
 

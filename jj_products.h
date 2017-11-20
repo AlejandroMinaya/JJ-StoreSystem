@@ -12,7 +12,7 @@ Interprets csv values and turns them into products (structures).
 */
 void loadProducts(void)
 {
-    FILE * products = fopen("assets/products.csv","r"); //We open the products.csv in read mode
+    FILE * products = fopen("products.csv","r"); //We open the products.csv in read mode
     char current_file_line[HEADING_SIZE];
     fgets(current_file_line, HEADING_SIZE, products); //We read the heading to move the pointer
     int i = 0;
@@ -39,9 +39,9 @@ Interprets product structs and parses them into CSV values
 void saveProducts(void)
 {
     char heading[HEADING_SIZE]; 
-    FILE * products = fopen("assets/products.csv", "r"); //We open products.csv in reading mode
+    FILE * products = fopen("products.csv", "r"); //We open products.csv in reading mode
     fgets(heading, HEADING_SIZE, products); //We save the heading to add it once we write
-    freopen("assets/products.csv","w",products); //We reopen the file for writing
+    freopen("products.csv","w",products); //We reopen the file for writing
     fprintf(products,"%s",heading); //We write our heading in file
     for(int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
     {
@@ -55,7 +55,7 @@ PRINT PRODUCT -
 */
 void printProducts(void)
 {
-    printHeading("assets/products.csv");
+    printHeading("products.csv");
     
     for(int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++) //While it doesn't exceed our limit
     {

@@ -10,7 +10,7 @@ This procedure reads the categories previously saved on file.
 */
 void loadCategories(void)
 {
-    FILE * categories = fopen("assets/categories.csv", "r");
+    FILE * categories = fopen("categories.csv", "r");
     char current_file_line[HEADING_SIZE];
     fgets(current_file_line, HEADING_SIZE, categories); // This line reads the heading to move the pointer and avoid runtime error.
     int i = 0;
@@ -38,9 +38,9 @@ This procedure allows the user to add the in program changes to the file databas
 void saveCategories(void)
 {
     char heading[HEADING_SIZE];
-    FILE * categories = fopen("assets/categories.csv", "r"); // We open the file in reading mode...
+    FILE * categories = fopen("categories.csv", "r"); // We open the file in reading mode...
     fgets(heading,HEADING_SIZE,categories); //...and store the heading to include it once we save
-    freopen("assets/categories.csv", "w", categories);
+    freopen("categories.csv", "w", categories);
     fprintf(categories, "%s",heading); //We print the heading since we are overwriting.
     for(int i = 0; in_file_categories[i].ID != END_CATEGORY.ID; i++) //While the name of the category is not null;
     {
@@ -88,7 +88,7 @@ This procedure prints all categories present in the file
 */
 void printCategories(void)
 {
-    printHeading("assets/categories.csv");
+    printHeading("categories.csv");
     
     //We print in file categories
     for(int i = 0; i < MAX_CATEGORIES; i++)

@@ -28,7 +28,7 @@ Procedure to read files and add to the array
 */
 void loadLedger(void)
 {
-    FILE * sales = fopen("assets/sales.csv","r"); //We open the file for reading
+    FILE * sales = fopen("sales.csv","r"); //We open the file for reading
     char heading[HEADING_SIZE];
     fgets(heading, HEADING_SIZE, sales); //We read the heading to move the pointer forward
     int i = 0;
@@ -53,10 +53,10 @@ Procedure to save sales to files
 */
 void saveLedger(void)
 {
-    FILE * sales = fopen("assets/sales.csv","r"); //We open the file for reading to get the heading
+    FILE * sales = fopen("sales.csv","r"); //We open the file for reading to get the heading
     char heading[HEADING_SIZE];
     fgets(heading, HEADING_SIZE, sales); //We read the heading and store it in the char array heading
-    freopen("assets/sales.csv", "w", sales); //We reopen the file for writing to save the sales
+    freopen("sales.csv", "w", sales); //We reopen the file for writing to save the sales
     fputs(heading,sales);
     for(int i = 0; ledger[i].is_order != END_SALE.is_order; i++)
     {
@@ -125,7 +125,7 @@ Procedure to print all sale information
 */
 void printSales(void)
 {
-    printHeading("assets/sales.csv");
+    printHeading("sales.csv");
    	
 	char timestamp[255]; //Here we will store the result of asctime()
 	for(int i = 0; ledger[i].is_order != END_SALE.is_order; i++)
