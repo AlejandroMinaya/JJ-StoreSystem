@@ -182,9 +182,9 @@ If the information this function recieves doesn't exist, it passes them to funct
 //NOTA: DEJAR UNA SECCION PARA SALES
 int orderProduct(long barcode, float price, int quantity)
 {
+    addSale(quantity * price, barcode, quantity, 1);
     for (int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
     {
-        addSale(quantity * price, barcode, quantity, 1);
 		if(in_file_products[i].barcode == barcode)
         {
             in_file_products[i].quantity += quantity;
@@ -192,7 +192,7 @@ int orderProduct(long barcode, float price, int quantity)
             {
                 in_file_products[i].enabled = 1;
             }
-            saveProducts();   
+            saveProducts();
             return 0;
         }
     }
