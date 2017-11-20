@@ -73,24 +73,6 @@ void printProducts(void)
             
 		    //We print the product name
 			printString(in_file_products[i].name, " ||");
-
-            //We print the price
-            // We get the length of the integer part of the price and add three (the decimal point and two decimals), and give it a tab equivalent
-			////tabs_to_add = (MAX_COLUMN_WIDTH - (int)log10(round(in_file_products[i].price)) - 6) / TAB_SIZE;
-			////if(tabs_to_add < 1) //If there aren't any tabs to add...
-			////{
-			////	printf(" %.2f", in_file_products[i].price / pow(10.0, (abs(tabs_to_add) + 3.0)));
-			////	printf("...");
-			////}
-			////else //...otherwise we simply print the number
-			////{
-			////	printf(" %.2f", in_file_products[i].price);
-			////	for(int j = 0; j < tabs_to_add; j++)
-			////	{
-			////		printf("\t");
-			////	}
-			////}
-			////printf(" ||");
           
 			//We print the price
 		   	printFloat(in_file_products[i].price, " ||");	
@@ -145,39 +127,44 @@ This function increases the quantity or creates products (if needed).
 */
 int addProduct(long barcode, char name[255], float price, int quantity, int category) //NOTA: DARLE LA OPCION DE QUE AGREGUE UNA CATEGORIA
 {
-    for (int i = 0; in_file_categories[i].ID != END_CATEGORY.ID; i++)
+    int i = 0;
+    for (; in_file_categories[i].ID != END_CATEGORY.ID; i++)
     {
-        if (category != in_file_categories[i].ID) // If the category given doesn't exist... 
+        if (category == in_file_categories[i].ID) // If the category given doesn't exist... 
         { 
-           return 1; //...we create it
-        }
-        for (int j = 0; in_file_products[j].barcode != END_PRODUCT.barcode; j++) //Goes through all barcodes 
-        {
-            if (in_file_products[j].barcode != barcode) //If the barcode given doesn't exist already 
+            int j = 0;
+            for (; in_file_products[j].barcode != END_PRODUCT.barcode; j++) //Goes through all barcodes 
             {
-                strcpy(in_file_products[j].name, name); 
-                in_file_products[j].price = price;
-                in_file_products[j].quantity += quantity;
-                in_file_products[j].category = category;
-                in_file_products[j].enabled = 1;
-            } 
-            else
-            { //If the barcode given already exists
-                in_file_products[j].quantity += quantity; //Adds the number of products to the already existing
+                if(in_file_products[j].barcode == barcode)
+                { //If the barcode given already exists
+                    in_file_products[j].quantity += quantity; //Adds the number of products to the already existing
+                    addSale(quantity * price, barcode, quantity, 1);
+                    if (in_file_products[j].enabled <= 0) //Makes that product available if it wasn't already
+                    {
+                            in_file_products[j].enabled = 1;
+                    }
+                    saveProducts();
+                    return 0;
+                }
             }
+            in_file_products[j].barcode = barcode;
+            strcpy(in_file_products[j].name, name); 
+            in_file_products[j].price = price;
+            in_file_products[j].quantity += quantity;
+            in_file_products[j].category = category;
+            in_file_products[j].enabled = 1;
+            addSale(quantity * price, barcode, quantity, 1);
+            saveProducts();
+            return 0;
             
-            if (in_file_products[j].enabled == 0) //Makes that product available if it wasn't already
-            {
-                    in_file_products[j].enabled = 1;
-            }
         }
     }
-    return 0;
+    return i;
 }
 
 /*
 ORDER PRODUCT -
-If the information this function recieves doesn't exist, it passes them to function ADD
+If the information this function recieves doesn't exist, it passes them to function ADD PRODUCT
 */
 //NOTA: DEJAR UNA SECCION PARA SALES
 int orderProduct(long barcode, float price, int quantity)
@@ -203,7 +190,7 @@ int orderProduct(long barcode, float price, int quantity)
 DELETE PRODUCT-
 This procedure states that the product exists, but it's not longer available
 */
-void deleteProduct(int product_barcode)
+void deleteProduct(long product_barcode)
 {
     for(int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
     {
@@ -222,7 +209,7 @@ This function allows the user to modify the information of an already existing p
 */ 
 void editProduct(long product_barcode, char name[255], float price, int quantity, int category)
 {
-    for(int i= 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
+    for(int i = 0; in_file_products[i].barcode != END_PRODUCT.barcode; i++)
     {
        if(in_file_products[i].barcode == product_barcode)
        {
@@ -242,10 +229,11 @@ void editProduct(long product_barcode, char name[255], float price, int quantity
             {
                 in_file_products[i].category = category;
             }
+            saveProducts();
+            return;
         } 
-        printf ("Codigo inexistente\n"); 
     }
-    saveProducts();
+    printf ("Codigo inexistente\n");
 }
    
 

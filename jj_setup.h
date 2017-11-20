@@ -242,8 +242,50 @@ void printFloat(float float_to_print, char separator[])
 	printf("%s",separator);
 }
 
+/*
+STRING TO DATE -
+Waits for user input of a date in the format dd/mm/yyyy
+@return tm structure
+*/
+struct tm stringToDate()
+{
+	int day = -1, month = -1, year = -1;
+	time_t _time = time(NULL);
+	struct tm current_time;
+	current_time = *localtime(&_time);
+	
+	scanf("%i/%i/%i", &day, &month, &year);
+	/*We substract 1900 in terms with the specifications of tm_year in
+	  reference*/
+	if(day < 0 || month < 0 || year < 0 || day > 31 || month > 12 || year - 1900 > current_time.tm_year)
+	{
+	    return current_time;
+	}
+	struct tm date = {.tm_mday = day, .tm_mon = month, .tm_year = year - 1900, .tm_wday = 0, .tm_hour = 0, .tm_isdst=0, .tm_sec = 0, .tm_min = 0, .tm_yday = 0};
+	return date;
+}
 
+/*
+GET OPTION -
+Waits for user input to get the option from the menu
+@return the user option
+*/
+int getOption()
+{
+    int option = 0;
+    scanf("%i%*c", &option);
+    return option;
+}
 
+/*
+ELIMINATE FGETS NEW LINE -
+Converts the automatic line-break produced by fgets into a null character
+@param the string to fix
+*/
+void eliminateNL(char string_to_fix[])
+{
+    string_to_fix[strlen(string_to_fix) - 1] = '\0';
+}
 
 //SALES//
 

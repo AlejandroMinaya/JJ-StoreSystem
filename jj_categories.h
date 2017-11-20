@@ -52,12 +52,12 @@ void saveCategories(void)
 /*
 ADD CATEGORIES -
 */
-void addCategory(char nombre[255], char description[255])
+void addCategory(char name[255], char description[255])
 {
     int new_entry_id = 0;
     for(;in_file_categories[new_entry_id].ID != END_CATEGORY.ID; new_entry_id++);
     in_file_categories[new_entry_id].ID = new_entry_id;
-    strcpy(in_file_categories[new_entry_id].name, nombre);
+    strcpy(in_file_categories[new_entry_id].name, name);
     strcpy(in_file_categories[new_entry_id].description, description);
     in_file_categories[new_entry_id].enabled = 1;
     

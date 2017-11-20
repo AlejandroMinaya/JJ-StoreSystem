@@ -100,18 +100,24 @@ float moneyInPeriod(struct tm start_date, struct tm end_date, int earnings)
     time_t end = mktime(&end_date);
     time_t current_time;
     float total_money = 0.0;
-    for(int i = 0; ledger[i].is_order != ledger[i].is_order; i++)
+    for(int i = 0; ledger[i].is_order != END_SALE.is_order; i++)
     {
         current_time = mktime(&ledger[i].timestamp);
         if(current_time >= start && current_time <= end)
         {
             if(earnings)
             {
-                total_money += ledger[i].amount;
+                if(ledger[i].is_order == 0)
+                {
+                    total_money += ledger[i].amount;
+                }
             }
             else
             {
-                total_money -= ledger[i].amount;
+                if(ledger[i].is_order)
+                {
+                    total_money -= ledger[i].amount;
+                }
             }
         }
         
