@@ -135,22 +135,22 @@ This procedure edits an already existing category
 */
 void editCategory(int category_id, char category_name[], char category_description[])
 {
-	struct category category_to_edit = findCategory(category_id);
-	
-	if(category_to_edit.ID != END_CATEGORY.ID)
-	{
-		printf("\nERROR: Aun no se ha creado esta categoria.\n");
-		return;
-	}
+	for(int i = 0; in_file_categories[i].ID != END_CATEGORY.ID; i++)
+	{	
+		if(in_file_categories[i].ID == category_id)
+		{
+			if(category_name[0] != '\0')
+			{
+				strcpy(in_file_categories[i].name, category_name);
+			}
 
-	if(category_name[0] != '\0')
-	{
-		strcpy(category_to_edit.name, category_name);
+			if(category_description[0] != '\0')
+			{
+				strcpy(in_file_categories[i].description, category_description);
+			}
+			saveCategories();
+			return;
+		}
 	}
-
-	if(category_description[0] != '\0')
-	{
-		strcpy(category_to_edit.description, category_description);
-	}
-	saveCategories();
+	printf("\nERROR: Aun no se crea esta categoria\n");
 }
