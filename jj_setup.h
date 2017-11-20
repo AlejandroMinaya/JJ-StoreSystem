@@ -51,8 +51,9 @@ void createMainFiles(void)
     FILE * archive;
     
     archive = fopen("categories.csv", "w");
-    fputs("ID Nombre,Nombre,Descripcion", archive);
-    fputs("\n",archive);
+    fputs("ID Number,Nombre,Descripcion", archive);
+    fputs("0,General,Categoria General",archive);
+	fputs("\n",archive);
     fclose(archive);
     
     archive = fopen("products.csv", "w");
