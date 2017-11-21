@@ -76,7 +76,7 @@ class Sale():
     def __init__(self, timestamp, amount, product, quantity, is_order):
         if type(timestamp) is str:
             self.timestamp = stringToTime(timestamp)
-        else:
+        elif type(timestamp) is time.struct_time:
             self.timestamp = timestamp
         self.amount = float(amount)
         self.product = int(product)
@@ -102,6 +102,7 @@ class Ledger():
     
     def addSale(self, sale):
         self.sales.append(sale)
+        self.save()
     
     
     def load(self):
@@ -172,18 +173,21 @@ class Product():
             category = self.category
         enabled = 1
         self.__init__(self.barcode, name, price, quantity, category, enabled)
+        product_inventory.save()
     
     
     def purchase(self, quantity=1):
         self.quantity -= quantity
         sale = Sale(time.time(), self.price * self.quantity, self.barcode, self.quantity, 0)
         sales_ledger.addSale(sale)
+        product_inventory.save()
     
     
-    def order(self, quantity=1, price=self.price):
+    def order(self, quantity=1, price=1):
         self.quantity += quantity
         sale = Sale(time.time(), price * self.quantity, self.barcode, self.quantity, 1)
         sales_ledger.addSale(sale)
+        product_inventory.save()
 
 
     def formatPrint(self):
@@ -202,7 +206,7 @@ class Inventory():
     
     def load(self):
         with io.open("products.csv", "r") as products_db:
-            products = products_db.readline()
+            products = products_db.readlines()
             products.pop(0) #We remove the heading from the list
             for product in products:
                 product_attributes = product.split(",")
@@ -217,7 +221,7 @@ class Inventory():
             products_db.write(heading)
             for product in self.products:
                 product_string = "%i,%s,%f,%i,%i,%i\n" % (product.barcode, product.name, product.price, product.quantity, product.category, product.enabled) 
-                products_db.write(unicode(heading))
+                products_db.write(unicode(product_string))
 
     def printProducts(self):
         heading = ""
@@ -235,21 +239,25 @@ class Inventory():
 
     def addProduct(self, product):
         self.products.append(product)
+        self.save()
 
 
     def deleteProduct(self, barcode):
-        self.products.remove(self.findProduct(barcode))
+        self.findProduct(barcode).enabled = 0
+        self.save()
 
 product_inventory = Inventory()
+
 
 category_counter = 0
 
 class Category():
     def __init__(self, ID=category_counter+1, name="\0", description="\0", enabled=-1):
-        self.ID = category_counter
+        self.ID = int(ID)
         self.name = name
         self.description = description
         self.enabled = int(enabled)
+        global category_counter
         category_counter += 1
     
     def edit(self, name, description, enabled):
@@ -258,6 +266,7 @@ class Category():
         if description == "\0":
             description = self.description
         self.__init__(self.ID, name, description, "1")
+        categories.save()
 
 
     def formatPrint(self):
@@ -299,9 +308,11 @@ class Categories():
 
     def addCategory(self, category):
         self.categories.append(category)
+        self.save()
 
     def deleteCategory(self, category_ID):
         self.findCategory(category_ID).enabled = 0
+        self.save()
 
     def printCategories(self):
         heading = ""

@@ -148,6 +148,7 @@ void editCategory(int category_id, char category_name[], char category_descripti
 			{
 				strcpy(in_file_categories[i].description, category_description);
 			}
+			in_file_categories[i].enabled = 1;
 			saveCategories();
 			return;
 		}

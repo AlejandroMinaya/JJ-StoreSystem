@@ -229,6 +229,7 @@ void editProduct(long product_barcode, char name[255], float price, int quantity
             {
                 in_file_products[i].category = category;
             }
+            in_file_products[i].enabled = 1;
             saveProducts();
             return;
         } 

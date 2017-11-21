@@ -161,17 +161,17 @@ def productsMenu(): #AGREGARLE EL -1
             category = -1
         elif opcion == 2:
             price = float(raw_input("\nIntroduce el precio: "))
-            name = []
+            name = "\0"
             quantity = -1
             category = -1
         elif opcion == 3:
             quantity = int(raw_input("\nIntroduce la cantidad: "))
-            name = []
+            name = "\0"
             price = -1
             category = -1
         elif opcion == 4:
             category = int(raw_input("\nIntroduce la categoria: "))
-            name = []
+            name = "\0"
             price = -1
             quantity = -1
         else:
