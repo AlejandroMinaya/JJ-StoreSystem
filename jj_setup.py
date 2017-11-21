@@ -133,6 +133,21 @@ class Ledger():
         for sale in self.sales:
             sale.formatPrint()
 
+    def moneyInPeriod(self, start_date, end_date, earning):
+        total_money = 0.0
+        start = time.mktime(stringToTime(start_date))
+        end = time.mktime(stringToTime(end_date))
+        for sale in self.sales:
+            if time.mktime(sale.timestamp) >= start and time.mktime(sale.timestamp) <= end:
+                if (earning):
+                    if not sale.is_order:
+                        total_money += sale.amount
+                else:
+                    if sale.is_order:
+                        total_money -= sale.amount
+        return total_money
+
+
 
 sales_ledger = Ledger()
 
@@ -297,3 +312,6 @@ class Categories():
         printHeading(heading)
         for category in self.categories:
             category.formatPrint()
+
+
+categories = Categories()
