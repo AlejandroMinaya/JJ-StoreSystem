@@ -5,7 +5,10 @@ def load():
     categories.load()
     sales_ledger.load()
 
-
+"""
+SALES MENU
+This function displays the Sales' menu
+"""
 def salesMenu():
     print "\tMENU CUENTAS"
     print "0. Regresar"
@@ -43,7 +46,10 @@ def salesMenu():
     else:
         print "ERROR: Lo siento, no tenemos esa opcion."
 
-
+"""
+CATEGORIES MENU
+This procedure displays the Categories' menu
+"""
 def categoriesMenu(): #AGREGAR opcion DENTRO DE PARENTESIS
     print "\tMENU CATEGORIAS\n"
     print "\n0. Regresar"
@@ -89,7 +95,10 @@ def categoriesMenu(): #AGREGAR opcion DENTRO DE PARENTESIS
     else:
         print "ERROR: Lo siento, no tenemos esa opcion"
 
-
+"""
+PRODUCTS MENU
+This procedure displays the Product's menu
+"""
 def productsMenu(): #AGREGARLE EL -1
     #opcion = -1
     print "\t MENU PRODUCTOS\n"
@@ -177,6 +186,10 @@ def productsMenu(): #AGREGARLE EL -1
         else:
             print "ERROR: Lo siento, no tenemos esa opcion."
 
+"""
+INVENTORY MENU
+This procedure displays the Inventory's Menu
+"""
 def inventoryMenu():
     print "\tMENU INVENTARIO\n"
     print "0. Regresar"
@@ -194,11 +207,13 @@ def inventoryMenu():
     else:
         print "ERROR: Lo siento, no tenemos esa opcion."
 
-
+"""
+MAIN MENU
+This procedure shows the main menu of the program, which is displayed until user choses to exit
+"""
 def mainMenu():
     opcion = 10
     while opcion != 0:
-        load()
         print "Bienvenido\n"
         print "0. Salir"
         print "1. Comprar un producto"
@@ -221,31 +236,12 @@ def mainMenu():
         else:
             print "ERROR: Lo siento, no tenemos esa opcion."
 
+"""
+START
+This procedure sets up the environment to run the program
+"""
 def start ():
     verifyInstallation()
     print "\t\t'Sistema de gestion de tiendas JJ'"
     load()
     mainMenu()
-    #opcion = -1
-    #while opcion != 0:
-    #    print "Bienvenido\n"
-    #    print "0. Salir"
-    #    print "1. Comprar un producto"
-    #    print "2. Revisar inventario"
-    #    print "3. Hacer cuentas"
-    #    opcion = int(raw_input("Selecciona una opcion: "))
-    #    
-    #    if opcion == 0:
-    #        print "Gracias por visitarnos"
-    #    elif opcion == 1:
-    #        #from jj_products import purchaseProduct
-    #        barcode = input("Introduce el codigo de barras: ")
-    #        quantity = int(raw_input("Introduce la cantidad: "))
-    #        
-    #        purchaseProduct(barcode, quantity)
-    #    elif opcion == 2:
-    #        inventaryMenu()
-    #    elif opcion == 3:
-    #        salesMenu()
-    #    else:
-    #        print "ERROR: Lo siento, no tenemos esa opcion."
