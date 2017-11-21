@@ -165,7 +165,7 @@ class Ledger():
             for sale in sales: #For each sale in file
                 sale_attributes = sale.split(",") #Split the string into a list
                 #We create a Sale object containing this information
-                sale_object = Sale(sale_attributes[0],sale_attributes[1],sale_attributes[2],sale_attributes[3],sale_attributes[4])
+                sale_object = Sale(sale_attributes[0],sale_attributes[1],sale_attributes[2],sale_attributes[3],sale_attributes[4], self)
                 self.addSale(sale_object) #We add the object to the general list
     
     
