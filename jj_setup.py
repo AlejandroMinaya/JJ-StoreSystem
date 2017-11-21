@@ -101,11 +101,11 @@ Function to convert a string into a struct_time structure
 def stringToTime(time_string):
     if "/" in time_string: #If the time string contains /, meaning it is in a dd/mm/yyyy format...
         time_info = map(int, time_string.split("/")) #Convert this into a list
-        return time.struct_time((time_info[2] + 1900, time_info[1], time_info[0], 0, 0, 0, 0, 0, 0)) #Fill a struct_time structure with the corresponding info
+        return time.struct_time((time_info[2]-2000, time_info[1], time_info[0], 0, 0, 0, 0, 0, 0)) #Fill a struct_time structure with the corresponding ino
     else: #Else, it took it from the database, and it is separated by spaces...
         time_info = map(int, time_string.split(" "))
         #Fill the struct_time accordingly
-        return time.struct_time((time_info[5], time_info[4], time_info[3], time_info[2], time_info[1], time_info[0], time_info[6], time_info[7], time_info[8]))
+        return time.struct_time((time_info[5]-100, time_info[4], time_info[3], time_info[2], time_info[1], time_info[0], time_info[6], time_info[7], time_info[8]))
 
 
 """
@@ -114,12 +114,11 @@ This class is used to define the sales that our program we will be registering
 """
 class Sale():
     def __init__(self, timestamp, amount, product, quantity, is_order, parent):
-        if type(timestamp) is str: #If the timestamp is a string....
-            self.timestamp = stringToTime(timestamp) #Parse it into a struct_time
+        if type(timestamp) is str or type(timestamp) is unicode: #If the timestamp is a string....
+            timestamp = stringToTime(str(timestamp)) #Parse it into a struct_time
         elif type(timestamp) is float: #If it is a float...
-            self.timestamp = time.localtime(timestamp) #Parse it into a struct_time
-        elif type(timestamp) is time.struct_time: #If it is a struct_time... 
-            self.timestamp = timestamp #Just assign it.
+            timestamp = time.localtime(timestamp) #Parse it into a struct_time
+        self.timestamp = timestamp 
         self.amount = float(amount)
         self.product = int(product)
         self.quantity = int(quantity)
@@ -132,7 +131,10 @@ class Sale():
     """
     def formatPrint(self):
         printString(time.asctime(self.timestamp), "||")
-        printString(str(self.amount), "||")
+        if(self.is_order):
+            printString(str(self.amount * -1), "||")
+        else:
+            printString(str(self.amount), "||")
         printString(product_inventory.findProduct(self.product).name, "||")
         printString(str(self.quantity),"||")
         if(self.is_order):
@@ -162,12 +164,12 @@ class Ledger():
         with io.open("sales.csv", "r") as sales_db:
             sales = sales_db.readlines() #We convert the file lines into a list
             sales.pop(0) #We eliminate the header from the list
+            sales.pop(len(sales) - 1) #We eliminate the EOF new line
             for sale in sales: #For each sale in file
                 sale_attributes = sale.split(",") #Split the string into a list
                 #We create a Sale object containing this information
                 sale_object = Sale(sale_attributes[0],sale_attributes[1],sale_attributes[2],sale_attributes[3],sale_attributes[4], self)
-                self.addSale(sale_object) #We add the object to the general list
-    
+                self.addSale(sale_object) #We add the object to the general list 
     
     def save(self):
         heading = "" #We create a empty string to store the heading of the file to save
@@ -176,15 +178,13 @@ class Ledger():
         with io.open("sales.csv", "w") as sales_db:
             sales_db.write(heading) #We write the heading
             for sale in self.sales: #For each sale in memory, we stringify it into a csv value and write it to file
-                sale_string = "%i %i %i %i %i %i %i %i %i, %f, %i, %i, %i\n" % (sale.timestamp.tm_sec, sale.timestamp.tm_min, sale.timestamp.tm_hour, sale.timestamp.tm_mday, sale.timestamp.tm_mon, sale.timestamp.tm_year, sale.timestamp.tm_wday, sale.timestamp.tm_yday, sale.timestamp.tm_isdst, sale.amount, sale.product, sale.quantity, sale.is_order)
+                sale_string = "%i %i %i %i %i %i %i %i %i, %f, %i, %i, %i\n" % (sale.timestamp.tm_sec, sale.timestamp.tm_min, sale.timestamp.tm_hour, sale.timestamp.tm_mday, sale.timestamp.tm_mon, sale.timestamp.tm_year + 100, sale.timestamp.tm_wday, sale.timestamp.tm_yday, sale.timestamp.tm_isdst, sale.amount, sale.product, sale.quantity, sale.is_order)
                 sales_db.write(unicode(sale_string))
+            sales_db.write(unicode("\n")) #We write the EOF new line
 
 
     def printSales(self):
-        heading = ""
-        with io.open("sales.csv", "r") as sales_db:
-            heading = sales_db.readline()
-        printHeading(heading) #We print the read heading
+        printHeading("sales.csv") #We print the read heading
         for sale in self.sales: #For each sale in memory we print it aesthetically
             sale.formatPrint()
 
@@ -241,20 +241,21 @@ class Product():
         if int(category) == -1:
             category = self.category
         enabled = 1 #If the product is automatically enabled if it was edited
-        self.__init__(self.barcode, name, price, quantity, category, enabled)
+        self.__init__(self.barcode, name, price, quantity, category, enabled, self.parent)
         self.parent.save()
     
 
     def purchase(self, quantity=1):
         self.quantity -= quantity
-        sale = Sale(time.localtime(time.time()), self.price * self.quantity, self.barcode, self.quantity, 0)
+        sale = Sale(time.localtime(time.time()), self.price * self.quantity, self.barcode, self.quantity, 0, sales_ledger)
         sales_ledger.addSale(sale)
         self.parent.save()
     
     
     def order(self, quantity=1, price=1):
         self.quantity += quantity
-        sale = Sale(time.localtime(time.time()), price * self.quantity, self.barcode, self.quantity, 1)
+        self.enabled = 1
+        sale = Sale(time.localtime(time.time()), price * self.quantity, self.barcode, self.quantity, 1, sales_ledger)
         sales_ledger.addSale(sale)
         self.parent.save()
 
@@ -276,7 +277,8 @@ class Inventory():
     def load(self):
         with io.open("products.csv", "r") as products_db:
             products = products_db.readlines()
-            products.pop(0) #We remove the heading from the list
+            products.pop(0) #We remove the heading from the list 
+            products.pop(len(products) - 1) #We eliminate the EOF new line
             for product in products:
                 product_attributes = product.split(",")
                 product_object = Product(product_attributes[0], product_attributes[1], product_attributes[2], product_attributes[3], product_attributes[4], product_attributes[5], self)
@@ -291,12 +293,10 @@ class Inventory():
             for product in self.products:
                 product_string = "%i,%s,%f,%i,%i,%i\n" % (product.barcode, product.name, product.price, product.quantity, product.category, product.enabled) 
                 products_db.write(unicode(product_string))
+            products_db.write(unicode("\n")) #We write the EOF new line
 
     def printProducts(self):
-        heading = ""
-        with io.open("products.csv", "r") as products_db:
-            heading = products_db.readline()
-        printHeading(heading)
+        printHeading("products.csv")
         for product in self.products:
             product.formatPrint()
     
@@ -307,8 +307,9 @@ class Inventory():
         return self.NULL
 
     def addProduct(self, product):
-        self.products.append(product)
-        self.save()
+        if self.findProduct(product.barcode) == self.NULL:
+            self.products.append(product)
+            self.save()
 
 
     def deleteProduct(self, barcode):
@@ -319,23 +320,25 @@ class Inventory():
 product_inventory = Inventory()
 
 class Category():
-    def __init__(self, ID=category_counter+1, name="\0", description="\0", enabled=-1, parent=None):
-        self.ID = int(ID)
+    def __init__(self, name="\0", description="\0", enabled=-1, parent=None, ID=-1):
+        global category_counter
         self.name = name
         self.description = description
         self.enabled = int(enabled)
         self.parent = parent
-
-        global category_counter
-        category_counter += 1
+        if ID == -1:
+            self.ID = category_counter + 1
+            category_counter += 1
+        else:
+            self.ID = int(ID)
     
-    def edit(self, name, description, enabled):
+    def edit(self, name, description):
         if name == "\0":#If null, do not change...
             name = self.name
         if description == "\0":
             description = self.description
-        self.__init__(self.ID, name, description, "1")
-        parent.save()
+        self.__init__(name, description, "1", self.parent, self.ID)
+        self.parent.save()
 
 
     def formatPrint(self):
@@ -347,15 +350,17 @@ class Category():
 class Categories():
     def __init__(self):
         self.categories = []
-        self.NULL = Category("-1","\0","\0","-1",None)
+        self.NULL = Category("\0","\0","-1",None,"-2")
     def load(self):
         with io.open("categories.csv", "r") as categories_db:
             categories = categories_db.readlines()
-            categories.pop(0) #We ignore the heading
+            categories.pop(0) #We ignore the heading 
+            categories.pop(len(categories) - 1) #We eliminate the EOF new line
             for category in categories:
                 category_attribute = category.split(",")
-                category_object = Category(category_attribute[0], category_attribute[1], category_attribute[2], category_attribute[3],self)
+                category_object = Category(category_attribute[1], category_attribute[2], category_attribute[3],self,category_attribute[0])
                 self.addCategory(category_object)
+        global category_counter
         category_counter = len(self.categories)
     
     def save(self):
@@ -367,6 +372,7 @@ class Categories():
             for category in self.categories:
                 category_string = "%i,%s,%s,%i\n" % (category.ID, category.name, category.description, category.enabled)
                 categories_db.write(unicode(category_string))
+            categories_db.write(unicode("\n")) #We write the EOF new line
 
 
     def findCategory(self, category_ID):
@@ -384,10 +390,7 @@ class Categories():
         self.save()
 
     def printCategories(self):
-        heading = ""
-        with io.open("categories.csv", "r") as categories_db:
-            heading = categories_db.readline()
-        printHeading(heading)
+        printHeading("categories.csv")
         for category in self.categories:
             category.formatPrint()
 

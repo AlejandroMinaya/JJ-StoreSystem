@@ -5,10 +5,13 @@ ID Numero,Nombre,Descripcion
 3,Crayolas,Divertidas,1
 4,Dulces,Dulces,1
 5,Jardin,Solo podadoras,1
-6,Lacteos Variados de Ganado de Vacas Vacuno,Mucha leche,1
+6,Lacteos,Poca Leche,1
 7,Bebes,Hermosos,0
 8,Refrescos,Hermosos,1
 9,Bebes,Super facil de usar,1
-10,Bebidas,Para viejitos,1
-11,Pianos,Para bebes,1
-12,Cereales,Confle,1
+10,Bebidas,Para viejitos,0
+11,Guitarras,Para bebes,1
+13,Perritos,Baratos,0
+14,Libros,Educativos,1
+15,0,0,1
+
