@@ -205,4 +205,4 @@ class Inventory():
     def deleteProduct(self, barcode):
         self.products.remove(self.findProduct(barcode))
 
-
+product_inventory = Inventory()
