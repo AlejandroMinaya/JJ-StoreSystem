@@ -6,11 +6,15 @@ import math
 import time
 import io
 
-MAX_COLUMN_WIDTH = 36
-TAB_SIZE = 8
+MAX_COLUMN_WIDTH = 36 #Maximum width the colums can have
+TAB_SIZE = 8 #Maximum size the tabs can have
 
-files = ["categories.csv","products.csv","sales.csv"]
+files = ["categories.csv","products.csv","sales.csv"] #The files the program needs
 
+"""
+FIND FILES
+This function finds the files the program needs and reads them
+"""
 def findMainFiles():
     for file_path in files:
         try:
@@ -19,11 +23,18 @@ def findMainFiles():
             return 0
     return 1
 
+"""
+CREATE FILE
+This function creates the files if they are not found
+"""
 def createMainFiles():
     for file_path in files:
        io.open(file_path, "w").close
     
-
+"""
+VERIFY INSTALLATION
+This function checks if there are files missing and sets the environment the program needs to run
+"""
 def verifyInstallation():
     if not findMainFiles():
         print "You are missing main files. \n"
@@ -34,6 +45,11 @@ def verifyInstallation():
         else:
             print "Couldn't complete the setup process.\n"
 
+"""
+PRINT HEADING
+Procedure for the printing procedures
+@param the path to the file where the heading is stored
+"""
 def printHeading(file_path):
     with io.open(file_path, "r") as working_file:
         columns = working_file.readline().split(",")
@@ -48,6 +64,11 @@ def printHeading(file_path):
             table_heading += columns[i]
         print table_heading
 
+"""
+PRINT STRING 
+Procedure that receives a string and prints it with the correct format
+@param the string to be print
+"""
 def printString(string_to_print, separator):
     amount_tabs_to_append = 0
     if (MAX_COLUMN_WIDTH - len(string_to_print)) % TAB_SIZE == 0:
@@ -63,7 +84,11 @@ def printString(string_to_print, separator):
         string_to_print = " " + string_to_print
     print string_to_print,separator,
 
-
+"""
+STRING TO TIME
+This function converts the string it recieves into time it is equal too
+@param the string the user introduces as dd/mm/yyyy
+"""
 def stringToTime(time_string):
     if "/" in time_string:
         time_info = map(int, time_string.split("/"))
@@ -72,6 +97,10 @@ def stringToTime(time_string):
         time_info = map(int, time_string.split(" "))
         return time.struct_time((time_info[5], time_info[4], time_info[3], time_info[2], time_info[1], time_info[0], time_info[6], time_info[7], time_info[8]))
 
+"""
+CLASS SALE
+This class contains the properties of "a sale"
+"""
 class Sale():
     def __init__(self, timestamp, amount, product, quantity, is_order):
         if type(timestamp) is str:
@@ -86,7 +115,7 @@ class Sale():
         self.is_order = int(is_order)
 
     
-    def formatPrint(self):
+    def formatPrint(self): #Prints the sales with format so they seem colums
         printString(time.asctime(self.timestamp), "||")
         printString(str(self.amount), "||")
         printString(product_inventory.findProduct(self.product).name, "||")
@@ -96,18 +125,21 @@ class Sale():
         else:
             printString("No", "\n")
 
-
+"""
+CLASS LEDGER
+This class contains the properties of the ledger 
+"""
 class Ledger():
     def __init__(self):
         self.sales = []
         self.NULL = Sale("0 0 0 0 0 0 0 0 0","-1","-1","-1","-1")
     
-    def addSale(self, sale):
+    def addSale(self, sale): #Adds sales to the ledger
         self.sales.append(sale)
         self.save()
     
     
-    def load(self):
+    def load(self): #Loads sales in the ledger
         with io.open("sales.csv", "r") as sales_db:
             sales = sales_db.readlines()
             sales.pop(0) #We eliminate the header from the list
@@ -117,7 +149,7 @@ class Ledger():
                 self.addSale(sale_object)
     
     
-    def save(self):
+    def save(self): #Saves sales in the ledger
         heading = ""
         with io.open("sales.csv", "r") as sales_db:
             heading = sales_db.readline()
@@ -128,7 +160,7 @@ class Ledger():
                 sales_db.write(unicode(sale_string))
 
 
-    def printSales(self):
+    def printSales(self): #Prints the sales that are in the ledger
         heading = ""
         with io.open("sales.csv", "r") as sales_db:
             heading = sales_db.readline()
@@ -136,7 +168,7 @@ class Ledger():
         for sale in self.sales:
             sale.formatPrint()
 
-    def moneyInPeriod(self, start_date, end_date, earning):
+    def moneyInPeriod(self, start_date, end_date, earning): #Calculates the money made/spent in certain time
         total_money = 0.0
         start = time.mktime(stringToTime(start_date))
         end = time.mktime(stringToTime(end_date))
@@ -154,6 +186,10 @@ class Ledger():
 
 sales_ledger = Ledger()
 
+"""
+CLASS PRODUCT
+This class contais the properties of a Product
+"""
 class Product():
     def __init__(self, barcode, name, price, quantity, category, enabled):
         self.barcode = int(barcode)
@@ -164,7 +200,7 @@ class Product():
         self.enabled = int(enabled)
     
     
-    def edit(self, name, price, quantity, category):
+    def edit(self, name, price, quantity, category): #Edits the product
         if name == "\0":
             name = self.name
         if float(price) == -1:
@@ -178,21 +214,21 @@ class Product():
         product_inventory.save()
     
     
-    def purchase(self, quantity=1):
+    def purchase(self, quantity=1): #Buys the product
         self.quantity -= quantity
         sale = Sale(time.time(), self.price * self.quantity, self.barcode, self.quantity, 0)
         sales_ledger.addSale(sale)
         product_inventory.save()
     
     
-    def order(self, quantity=1, price=1):
+    def order(self, quantity=1, price=1): #Orders new of the products
         self.quantity += quantity
         sale = Sale(time.time(), price * self.quantity, self.barcode, self.quantity, 1)
         sales_ledger.addSale(sale)
         product_inventory.save()
 
 
-    def formatPrint(self):
+    def formatPrint(self): #Prints the products in the file
         if self.enabled:
             printString(str(self.barcode), "||")
             printString(self.name, "||")
@@ -200,6 +236,10 @@ class Product():
             printString(str(self.quantity), "||")
             printString(categories.findCategory(self.category).name, "\n")  
 
+"""
+CLASS INVENTORY
+This class contains the properties of the Inventory
+"""
 class Inventory():
     def __init__(self):
         self.products = []
@@ -215,7 +255,7 @@ class Inventory():
                 product_object = Product(product_attributes[0], product_attributes[1], product_attributes[2], product_attributes[3], product_attributes[4], product_attributes[5])
                 self.addProduct(product_object)
 
-    def save(self):
+    def save(self): #Saves the new products in the file
         heading = ""
         with io.open("products.csv", "r") as products_db:
             heading = products_db.readline()
@@ -225,7 +265,7 @@ class Inventory():
                 product_string = "%i,%s,%f,%i,%i,%i\n" % (product.barcode, product.name, product.price, product.quantity, product.category, product.enabled) 
                 products_db.write(unicode(product_string))
 
-    def printProducts(self):
+    def printProducts(self): #Prints the products of the file
         heading = ""
         with io.open("products.csv", "r") as products_db:
             heading = products_db.readline()
@@ -233,18 +273,18 @@ class Inventory():
         for product in self.products:
             product.formatPrint()
     
-    def findProduct(self, barcode):
+    def findProduct(self, barcode): #Finds the products in the file, with the help of the barcode
         for product in self.products:
             if product.barcode == barcode:
                 return product
         return self.NULL
 
-    def addProduct(self, product):
+    def addProduct(self, product #Adds the new products to the file
         self.products.append(product)
         self.save()
 
 
-    def deleteProduct(self, barcode):
+    def deleteProduct(self, barcode): #Deletes the products the user wants
         self.findProduct(barcode).enabled = 0
         self.save()
 
@@ -253,6 +293,10 @@ product_inventory = Inventory()
 
 category_counter = 0
 
+"""
+CLASS CATEGORY
+This class contains the properties of a Category
+"""
 class Category():
     def __init__(self, ID=category_counter+1, name="\0", description="\0", enabled=-1):
         self.ID = int(ID)
@@ -262,7 +306,7 @@ class Category():
         global category_counter
         category_counter += 1
     
-    def edit(self, name, description, enabled):
+    def edit(self, name, description, enabled): #Edits the properties of the categories
         if name == "\0":
             name = self.name
         if description == "\0":
@@ -271,7 +315,7 @@ class Category():
         categories.save()
 
 
-    def formatPrint(self):
+    def formatPrint(self): #Prints the categories
         if(self.enabled):
             printString(str(self.ID), "||")
             printString(self.name, "||")
@@ -291,7 +335,7 @@ class Categories():
                 self.addCategory(category_object)
         category_counter = len(self.categories)
     
-    def save(self):
+    def save(self): #
         heading = ""
         with io.open("categories.csv", "r") as categories_db:
             heading = categories_db.readline()
@@ -302,13 +346,13 @@ class Categories():
                 categories_db.write(unicode(category_string))
 
 
-    def findCategory(self, category_ID):
+    def findCategory(self, category_ID): #Finds an especific category
         for category in self.categories:
             if category.ID == category_ID:
                 return category
         return self.NULL
 
-    def addCategory(self, category):
+    def addCategory(self, category): #Adds new categories
         self.categories.append(category)
         self.save()
 
