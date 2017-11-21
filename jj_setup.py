@@ -79,7 +79,7 @@ class Sale():
         elif type(timestamp) is time.struct_time:
             self.timestamp = timestamp
         else:
-            self.timestamp = time.mktime(time.time())
+            self.timestamp = time.localtime(time.time())
         self.amount = float(amount)
         self.product = int(product)
         self.quantity = int(quantity)
