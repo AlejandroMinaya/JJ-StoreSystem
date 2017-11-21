@@ -259,9 +259,9 @@ class Category():
 
     def formatPrint(self):
         if(self.enabled):
-            printString(str(self.ID))
-            printString(self.name)
-            printString(self.description)
+            printString(str(self.ID), "||")
+            printString(self.name, "||")
+            printString(self.description, "\n")
 
 
 class Categories():

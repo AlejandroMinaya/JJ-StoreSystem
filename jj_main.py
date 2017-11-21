@@ -1,11 +1,9 @@
-import jj_products
-import jj_setup
-import jj_categories
+from jj_setup import *
 
 def load():
-    loadProducts()
-    loadCategories()
-    loadLedger()
+    product_inventory.load()
+    categories.load()
+    sales_ledger.load()
 
 
 def salesMenu():
@@ -20,28 +18,33 @@ def salesMenu():
     if opcion == 0:
         mainMenu()
     elif opcion == 1:
-        printSales()
+        sales_ledger.printSales()
     elif opcion == 2:
-        "Ingrese la fecha de inicio en formato dd/mm/yyyy"
-        "Ingrese la fecha de fin en formato dd/mm/yyyy"
+        start_date = input("Ingrese la fecha de inicio en formato dd/mm/yyyy")
+        stringToTime(start_date)
+        end_date = input("Ingrese la fecha de fin en formato dd/mm/yyyy")
+        stringToTime(end_date)
         
         print "Ganancias: %.2f", #AQUI FALTAN COSAS
     elif opcion == 3:
-        "Ingrese la fecha de incio en formato dd/mm/yyyy"
-        "Ingrese la fecha de fin en formato dd/mm/yyyy"
+        start_date = input("Ingrese la fecha de incio en formato dd/mm/yyyy")
+        stringToTime(start_date)
+        end_date = input("Ingrese la fecha de fin en formato dd/mm/yyyy")
+        stringToTime(end_date)
         
         print "Costos: %.2f", #AQUI FALTAN COSAS
     elif opcion == 4:
-        print "Ingrese la fecha de inicio en formato dd/mm/yyyy"
-        
-        print "Ingrese la fecha de fin en formato dd/mm/yyyy"
+        start_date = input("Ingrese la fecha de inicio en formato dd/mm/yyyy")
+        stringToTime(start_date)
+        end_date = input ("Ingrese la fecha de fin en formato dd/mm/yyyy")
+        stringToTime(end_date)
         
         print "Balance: %.2f", #AQUI FALTAN COSAS
     else:
         print "ERROR: Lo siento, no tenemos esa opcion."
 
 
-def categoriesMenu(opcion): #AGREGAR opcion DENTRO DE PARENTESIS
+def categoriesMenu(): #AGREGAR opcion DENTRO DE PARENTESIS
     print "\tMENU CATEGORIAS\n"
     print "\n0. Regresar"
     print "\n1. Agregar categoria"
@@ -55,12 +58,13 @@ def categoriesMenu(opcion): #AGREGAR opcion DENTRO DE PARENTESIS
     elif opcion == 1:
         category_name = input("\nIngrese el nombre de la nueva categoria: ")
         category_description = input("\nIngrese la descripcion de la nueva categoria")
-        addCategory(category_name, category_description)
-        printCategories()
+        tmp_category = Category(category_name, category_description)
+        categories.addCategory(tmp_category)
+        categories.printCategories()
     elif opcion == 2:
         category_id = int(raw_input("\nIngrese el ID de la categoria a eliminar"))
-        deleteCategory(category_id)
-        printCategories()
+        categories.deleteCategory(category_id)
+        categories.printCategories()
     elif opcion == 3:
         edit_category_id = ("\nIngrese el ID de la categoria a editar: ")
         print "\tEDICION CATEGORIA"
@@ -73,15 +77,15 @@ def categoriesMenu(opcion): #AGREGAR opcion DENTRO DE PARENTESIS
             inventoryMenu()
         elif opcion == 1:
             category_name = input("\n\tIngrese el nuevo nombre: ")
-            editCategory(edit_category_id, category_name, "\0")
+            categories.findCategory(edit_category_id).edit(category_name, "\0")
         elif opcion == 2:
             category_description = input("\n\tIngrese la nueva descripcion:")
-            editCategory(edit_category_id, "\0", category_description)
+            categories.findCategory(edit_category_id).edit("\0", category_description)
         else:
             print "ERROR: Lo siento, no tenemos esa opcion"
-        printCategories()
+        categories.printCategories()
     elif opcion == 4:
-        printCategories()
+        categories.printCategories()
     else:
         print "ERROR: Lo siento, no tenemos esa opcion"
 
@@ -102,32 +106,40 @@ def productsMenu(): #AGREGARLE EL -1
     if opcion == 0:
         inventoryMenu()
     elif opcion == 1:
-        printProducts()
+        product_inventory.printProducts()
     elif opcion == 2:
         barcode = input("Introduce el codigo de barras: ")
         name = input("Introduce el nombre: ")
         price = float(raw_input("Introduce el precio: "))
         quantity = int(raw_input("Introduce la cantidad: "))
         category = int(raw_input("Introduce la categoria: "))
-        category = addProduct(barcode, name, price, quantity, category)
+        tmp_product = Product(barcode, name, price, quantity, category, 1)
+        category = product_inventory.addProduct(tmp_product)
         
         if(category):
             print "Esta categoria no existe. Creela a continuacion:\n"
             categoriesMenu()
-            addProduct(barcode, name, price, quantity, category)
-        printProducts()
+            tmp_product = Product(barcode, name, price, quantity, category, 1)
+            product_inventory.addProduct(tmp_product)
+        product_inventory.printProducts()
     elif opcion == 3:
         barcode = input("Introduce el codigo de barras: ")
-        deleteProduct(barcode)
-        printProducts()
+        product_inventory.deleteProduct(barcode)
+        product_inventory.printProducts()
     elif opcion == 4:
         barcode = input("Introduce el codigo de barras: ")
         price = float("Introduce el precio: ")
         quantity = int(raw_input("Introduce el precio: "))
-        if (orderProduct(barcode, price, quantity)):
+        
+        
+        tmp_product = product_inventory.findProduct(barcode)
+        if tmp_product == product_inventory.NULL:
+            #NO ENCONTRO
             print "Este producto no existe. Creelo a continuacion."
             productsMenu()
-        printProducts()
+        else:
+            tmp_product.order(quantity, price)
+        product_inventory.printProducts()
     elif opcion == 5:
         barcode = input("\nIngrese el codigo de barra del producto que quiera editar")
         #if(findProduct(barcode).barcode == END_PRODUCT.barcode)
@@ -201,9 +213,9 @@ def mainMenu():
             barcode = input("Introduce el codigo de barras: ")
             quantity = int(raw_input("Introduce la cantidad: "))
             
-            purchaseProduct(barcode, quantity)
+            product_inventory.findProduct(barcode).purchase(quantity) 
         elif opcion == 2:
-            inventaryMenu()
+            inventoryMenu()
         elif opcion == 3:
             salesMenu()
         else:
