@@ -242,12 +242,15 @@ class Inventory():
 
 product_inventory = Inventory()
 
+category_counter = 0
+
 class Category():
     def __init__(self, ID, name, description, enabled):
-        self.ID = int(ID)
+        self.ID = category_counter
         self.name = name
         self.description = description
         self.enabled = int(enabled)
+        category_counter += 1
     
     def edit(self, name, description, enabled):
         if name == "\0":
@@ -263,12 +266,10 @@ class Category():
             printString(self.name, "||")
             printString(self.description, "\n")
 
-
 class Categories():
     def __init__(self):
         self.categories = []
         self.NULL = Category("-1","\0","\0","-1")
-
     def load(self):
         with io.open("categories.csv", "r") as categories_db:
             categories = categories_db.readlines()
@@ -277,6 +278,7 @@ class Categories():
                 category_attribute = category.split(",")
                 category_object = Category(category_attribute[0], category_attribute[1], category_attribute[2], category_attribute[3])
                 self.addCategory(category_object)
+        category_counter = len(self.categories)
     
     def save(self):
         heading = ""
