@@ -129,7 +129,7 @@ class Ledger():
         heading = ""
         with io.open("sales.csv", "r") as sales_db:
             heading = sales_db.readline()
-        printHeadgin(heading)
+        printHeading(heading)
         for sale in self.sales:
             sale.formatPrint()
 
