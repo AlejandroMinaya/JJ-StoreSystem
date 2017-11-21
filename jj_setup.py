@@ -83,6 +83,18 @@ class Sale():
         self.quantity = int(quantity)
         self.is_order = int(is_order)
 
+    
+    def formatPrint(self):
+        printString(time.asctime(self.timestamp), "||")
+        printString(str(self.amount), "||")
+        printString(str(self.product), "||")
+        printString(str(self.quantity),"||")
+        if(self.is_order):
+            printString("Si", "\n")
+        else:
+            printString("No", "\n")
+
+
 class Ledger():
     def __init__(self):
         self.sales = []
@@ -111,6 +123,16 @@ class Ledger():
             for sale in self.sales:
                 sale_string = "%i %i %i %i %i %i %i %i %i, %f, %i, %i, %i\n" % (sale.timestamp.tm_sec, sale.timestamp.tm_min, sale.timestamp.tm_hour, sale.timestamp.tm_mday, sale.timestamp.tm_mon, sale.timestamp.tm_year, sale.timestamp.tm_wday, sale.timestamp.tm_yday, sale.timestamp.tm_isdst, sale.amount, sale.product, sale.quantity, sale.is_order)
                 sales_db.write(unicode(sale_string))
+
+
+    def printSales(self):
+        heading = ""
+        with io.open("sales.csv", "r") as sales_db:
+            heading = sales_db.readline()
+        printHeadgin(heading)
+        for sale in self.sales:
+            sale.formatPrint()
+
 
 sales_ledger = Ledger()
 
@@ -151,7 +173,7 @@ class Product():
         sales_ledger.addSale(sale)
 
 
-    def format_print(self):
+    def formatPrint(self):
         if self.enabled:
             printString(str(self.barcode), "||")
             printString(self.name, "||")
@@ -190,7 +212,7 @@ class Inventory():
             heading = products_db.readline()
         printHeading(heading)
         for product in self.products:
-            product.format_print()
+            product.formatPrint()
     
     def findProduct(self, barcode):
         for product in self.products:
