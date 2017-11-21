@@ -163,8 +163,35 @@ class Inventory():
     def __init__(self):
         self.products = []
         self.NULL = Product("-1", "-1", "-1", "-1", "-1", "-1")
+    
+    
+    def load(self):
+        with io.open("products.csv", "r") as products_db:
+            products = products_db.readline()
+            products.pop(0) #We remove the heading from the list
+            for product in products:
+                product_attributes = product.split(",")
+                product_object = Product(product_attributes[0], product_attributes[1], product_attributes[2], product_attributes[3], product_attributes[4], product_attributes[5])
+                self.addProduct(product_object)
 
+    def save(self):
+        heading = ""
+        with io.open("products.csv", "r") as products_db:
+            heading = products_db.readline()
+        with io.open("products.csv", "w") as products_db:
+            products_db.write(heading)
+            for product in self.products:
+                product_string = "%i,%s,%f,%i,%i,%i" % (product.barcode, product.name, product.price, product.quantity, product.category, product.enabled) 
+                products_db.write(unicode(heading))
 
+    def printProducts(self):
+        heading = ""
+        with io.open("products.csv", "r") as products_db:
+            heading = prodcuts_db.readline()
+        printHeading(heading)
+        for product in self.products:
+            product.format_print()
+    
     def findProduct(self, barcode):
         for product in self.products:
             if product.barcode == barcode:
