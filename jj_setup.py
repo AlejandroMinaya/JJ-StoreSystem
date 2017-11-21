@@ -245,7 +245,7 @@ product_inventory = Inventory()
 category_counter = 0
 
 class Category():
-    def __init__(self, ID, name, description, enabled):
+    def __init__(self, ID=category_counter+1, name="\0", description="\0", enabled=-1):
         self.ID = category_counter
         self.name = name
         self.description = description
