@@ -87,7 +87,7 @@ void verifyInstallation(void)
             case 'Y':
             case 'y':
                 createMainFiles();
-                break;
+                return;
             case 'n':
             case 'N':
                 printf("Couldn't complete setup process.\n");
