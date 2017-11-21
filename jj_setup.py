@@ -187,7 +187,7 @@ class Inventory():
     def printProducts(self):
         heading = ""
         with io.open("products.csv", "r") as products_db:
-            heading = prodcuts_db.readline()
+            heading = products_db.readline()
         printHeading(heading)
         for product in self.products:
             product.format_print()
