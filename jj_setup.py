@@ -166,7 +166,7 @@ class Inventory():
 
 
     def findProduct(self, barcode):
-        for product in products:
+        for product in self.products:
             if product.barcode == barcode:
                 return product
         return self.NULL
