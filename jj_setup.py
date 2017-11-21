@@ -161,9 +161,7 @@ class Product():
         self.enabled = int(enabled)
     
     
-    def edit(self, barcode, name, price, quantity, category):
-        if int(barcode) == -1:
-            barcode = self.barcode
+    def edit(self, name, price, quantity, category):
         if name == "\0":
             name = self.name
         if float(price) == -1:
@@ -173,7 +171,7 @@ class Product():
         if int(category) == -1:
             category = self.category
         enabled = 1
-        self.__init__(barcode, name, price, quantity, category, enabled)
+        self.__init__(self.barcode, name, price, quantity, category, enabled)
     
     
     def purchase(self, quantity=1):
@@ -251,14 +249,12 @@ class Category():
         self.description = description
         self.enabled = int(enabled)
     
-    def edit(self, ID, name, description, enabled):
-        if int(ID) == -1:
-            ID = self.ID
+    def edit(self, name, description, enabled):
         if name == "\0":
             name = self.name
         if description == "\0":
             description = self.description
-        self.__init__(ID, name, description, "1")
+        self.__init__(self.ID, name, description, "1")
 
 
     def formatPrint(self):
@@ -293,7 +289,7 @@ class Categories():
                 categories_db.write(unicode(category_string))
 
 
-    def findCategory(self, category_ID)
+    def findCategory(self, category_ID):
         for category in self.categories:
             if category.ID == category_ID:
                 return category
