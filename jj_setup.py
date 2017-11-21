@@ -87,7 +87,7 @@ class Sale():
     def formatPrint(self):
         printString(time.asctime(self.timestamp), "||")
         printString(str(self.amount), "||")
-        printString(str(self.product), "||")
+        printString(product_inventory.findProduct(self.product).name, "||")
         printString(str(self.quantity),"||")
         if(self.is_order):
             printString("Si", "\n")
@@ -167,9 +167,9 @@ class Product():
         sales_ledger.addSale(sale)
     
     
-    def order(self, quantity=1):
+    def order(self, quantity=1, price=self.price):
         self.quantity += quantity
-        sale = Sale(time.time(), self.price * self.quantity, self.barcode, self.quantity, 1)
+        sale = Sale(time.time(), price * self.quantity, self.barcode, self.quantity, 1)
         sales_ledger.addSale(sale)
 
 
@@ -179,12 +179,12 @@ class Product():
             printString(self.name, "||")
             printString(str(self.price), "||")
             printString(str(self.quantity), "||")
-            printString(str(self.category), "\n")  
+            printString(categories.findCategory(self.category).name, "\n")  
 
 class Inventory():
     def __init__(self):
         self.products = []
-        self.NULL = Product("-1", "-1", "-1", "-1", "-1", "-1")
+        self.NULL = Product("-1", "\0", "-1", "-1", "-1", "-1")
     
     
     def load(self):
@@ -203,7 +203,7 @@ class Inventory():
         with io.open("products.csv", "w") as products_db:
             products_db.write(heading)
             for product in self.products:
-                product_string = "%i,%s,%f,%i,%i,%i" % (product.barcode, product.name, product.price, product.quantity, product.category, product.enabled) 
+                product_string = "%i,%s,%f,%i,%i,%i\n" % (product.barcode, product.name, product.price, product.quantity, product.category, product.enabled) 
                 products_db.write(unicode(heading))
 
     def printProducts(self):
@@ -228,3 +228,72 @@ class Inventory():
         self.products.remove(self.findProduct(barcode))
 
 product_inventory = Inventory()
+
+class Category():
+    def __init__(self, ID, name, description, enabled):
+        self.ID = int(ID)
+        self.name = name
+        self.description = description
+        self.enabled = int(enabled)
+    
+    def edit(self, ID, name, description, enabled):
+        if int(ID) == -1:
+            ID = self.ID
+        if name == "\0":
+            name = self.name
+        if description == "\0":
+            description = self.description
+        self.__init__(ID, name, description, "1")
+
+
+    def formatPrint(self):
+        if(self.enabled):
+            printString(str(self.ID))
+            printString(self.name)
+            printString(self.description)
+
+
+class Categories():
+    def __init__(self):
+        self.categories = []
+        self.NULL = Category("-1","\0","\0","-1")
+
+    def load(self):
+        with io.open("categories.csv", "r") as categories_db:
+            categories = categories_db.readlines()
+            categories.pop(0) #We ignore the heading
+            for category in categories:
+                category_attribute = category.split(",")
+                category_object = Category(category_attribute[0], category_attribute[1], category_attribute[2], category_attribute[3])
+                self.addCategory(category_object)
+    
+    def save(self):
+        heading = ""
+        with io.open("categories.csv", "r") as categories_db:
+            heading = categories_db.readline()
+        with io.open("categories.csv", "w") as categories_db:
+            categories_db.write(heading)
+            for category in self.categories:
+                category_string = "%i,%s,%s,%i\n" % (category.ID, category.name, category.description, category.enabled)
+                categories_db.write(unicode(category_string))
+
+
+    def findCategory(self, category_ID)
+        for category in self.categories:
+            if category.ID == category_ID:
+                return category
+        return self.NULL
+
+    def addCategory(self, category):
+        self.categories.append(category)
+
+    def deleteCategory(self, category_ID):
+        self.findCategory(category_ID).enabled = 0
+
+    def printCategories(self):
+        heading = ""
+        with io.open("categories.csv", "r") as categories_db:
+            heading = categories_db.readline()
+        printHeading(heading)
+        for category in self.categories:
+            category.formatPrint()
