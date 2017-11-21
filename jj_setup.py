@@ -74,7 +74,10 @@ def stringToTime(time_string):
 
 class Sale():
     def __init__(self, timestamp, amount, product, quantity, is_order):
-        self.timestamp = stringToTime(timestamp)
+        if type(timestamp) is str:
+            self.timestamp = stringToTime(timestamp)
+        else:
+            self.timestamp = timestamp
         self.amount = float(amount)
         self.product = int(product)
         self.quantity = int(quantity)
@@ -83,8 +86,12 @@ class Sale():
 class Ledger():
     def __init__(self):
         self.sales = []
+        self.NULL = Sale("0 0 0 0 0 0 0 0 0","-1","-1","-1","-1")
+    
     def addSale(self, sale):
         self.sales.append(sale)
+    
+    
     def load(self):
         with io.open("sales.csv", "r") as sales_db:
             sales = sales_db.readlines()
@@ -93,6 +100,8 @@ class Ledger():
                 sale_attributes = sale.split(",")
                 sale_object = Sale(sale_attributes[0],sale_attributes[1],sale_attributes[2],sale_attributes[3],sale_attributes[4])
                 self.addSale(sale_object)
+    
+    
     def save(self):
         heading = ""
         with io.open("sales.csv", "r") as sales_db:
@@ -102,3 +111,71 @@ class Ledger():
             for sale in self.sales:
                 sale_string = "%i %i %i %i %i %i %i %i %i, %f, %i, %i, %i\n" % (sale.timestamp.tm_sec, sale.timestamp.tm_min, sale.timestamp.tm_hour, sale.timestamp.tm_mday, sale.timestamp.tm_mon, sale.timestamp.tm_year, sale.timestamp.tm_wday, sale.timestamp.tm_yday, sale.timestamp.tm_isdst, sale.amount, sale.product, sale.quantity, sale.is_order)
                 sales_db.write(unicode(sale_string))
+
+sales_ledger = Ledger()
+
+class Product():
+    def __init__(self, barcode, name, price, quantity, category, enabled):
+        self.barcode = int(barcode)
+        self.name = name
+        self.price = float(price)
+        self.quantity = int(quantity)
+        self.category = int(category)
+        self.enabled = int(enabled)
+    
+    
+    def edit(self, barcode, name, price, quantity, category):
+        if int(barcode) == -1:
+            barcode = self.barcode
+        if name == "\0":
+            name = self.name
+        if float(price) == -1:
+            price = self.price
+        if int(quantity) == -1:
+            quantity = self.quantity
+        if int(category) == -1:
+            category = self.category
+        enabled = 1
+        self.__init__(barcode, name, price, quantity, category, enabled)
+    
+    
+    def purchase(self, quantity=1):
+        self.quantity -= quantity
+        sale = Sale(time.time(), self.price * self.quantity, self.barcode, self.quantity, 0)
+        sales_ledger.addSale(sale)
+    
+    
+    def order(self, quantity=1):
+        self.quantity += quantity
+        sale = Sale(time.time(), self.price * self.quantity, self.barcode, self.quantity, 1)
+        sales_ledger.addSale(sale)
+
+
+    def format_print(self):
+        if self.enabled:
+            printString(str(self.barcode), "||")
+            printString(self.name, "||")
+            printString(str(self.price), "||")
+            printString(str(self.quantity), "||")
+            printString(str(self.category), "\n")  
+
+class Inventory():
+    def __init__(self):
+        self.products = []
+        self.NULL = Product("-1", "-1", "-1", "-1", "-1", "-1")
+
+
+    def findProduct(self, barcode):
+        for product in products:
+            if product.barcode == barcode:
+                return product
+        return self.NULL
+
+    def addProduct(self, product):
+        self.products.append(product)
+
+
+    def deleteProduct(self, barcode):
+        self.products.remove(self.findProduct(barcode))
+
+

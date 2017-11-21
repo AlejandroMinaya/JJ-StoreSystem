@@ -1,7 +1,11 @@
 from jj_setup import *
-sales = Ledger()
-sales.load()
-holis = Sale("0 0 0 0 0 0 0 0 0","12.50","7503033954085","10","0")
-sales.addSale(holis)
-sales.save()
-print sales.sales
+new_product = Product("7501033954087", "Ensure 237ml", "25.50", "100", "0", "1")
+print "Quantity: %i" % new_product.quantity
+print "Purchasing..."
+new_product.purchase()
+print "Quantity: %i" % new_product.quantity
+print "Purchasing 10..."
+new_product.purchase(10)
+print "Quantity: %i" % new_product.quantity
+
+new_product.format_print()
